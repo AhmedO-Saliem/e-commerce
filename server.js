@@ -2,16 +2,19 @@ import dotenv from "dotenv";
 import express from "express";
 import { ApiError } from "./src/utils/api.error.js";
 
-dotenv.config({ path: "config.env" });
+dotenv.config({ path: "./config/config.env" });
 
 const app = express();
 
+// Middleware setup
+app.use(express.json());
+
 // Connect to database
-import connectDB from "./src/config/db.js";
+import connectDB from "./db/db.js";
 connectDB();
 
 // Mount Routes
-import categoryRouter from "./src/routes/category.routes.js";
+import categoryRouter from "./src/modules/category/category.routes.js";
 app.use("/api/v1/categories", categoryRouter);
 
 app.all("*", (req, res, next) => {
