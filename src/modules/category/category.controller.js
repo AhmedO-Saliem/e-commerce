@@ -3,56 +3,65 @@ import CategoryModel from "./../../../db/models/category.model.js";
 import asyncHandler from "express-async-handler";
 import { ApiError } from "../../utils/api.error.js";
 import categoryServices from "./category.services.js";
-import { ApiFeature } from "../../utils/api.features.js";
 
-export const createCategory = asyncHandler(async (req, res) => {
+// ============================== createCategory =====================================//
+
+export const createCategory = asyncHandler(async (req, res, next) => {
   const { name } = req.body;
   const cat = await categoryServices.createCategory({ name });
-  res.status(201).json({ message: "Category created successfully", data: cat });
+  !cat && next(new ApiError("Category not created", 400));
+  res.status(201).json({ message: "Category Created Successfully", data: cat });
 });
 
-// export const getCategories = asyncHandler(async (req, res, next) => {
-//   // const page = req.query.page * 1 || 1;
-//   // const limit = req.query.limit * 1 || 5;
-//   // const skip = (page - 1) * limit;
-//   const cat = await CategoryModel.find({}).skip(skip).limit(limit);
-//   if (!cat) return next(new ApiError("No categories found", 404));
-//   res.status(201).json({ results: cat.length, data: cat });
-// });
+// ============================== getCategories =====================================//
+
 export const getCategories = asyncHandler(async (req, res, next) => {
-  // const page = req.query.page * 1 || 1;
-  // const limit = req.query.limit * 1 || 5;
-  // const skip = (page - 1) * limit;
-  // const cat = await CategoryModel.find({}).skip(skip).limit(limit);
-   const ApiFeature = new ApiFeature(
-    // CategoryModel.find({}),
-    req.query
-  ).pagination();
-  if (!cat) return next(new ApiError("No categories found", 404));
-  res.status(201).json({ results: cat.length, data: cat });
+  const categories = await categoryServices.getCategories(req.query).populate("subCategory");
+
+  if (!categories || categories.length === 0) {
+    return next(new ApiError("No categories found", 404));
+  }
+  res.status(200).json({
+    message: "Categories retrieved successfully",
+    results: categories.length,
+    page: req.query.page || 1,
+    data: categories,
+  });
 });
+
+// ============================== getCategoryBySlug =====================================//
+export const getCategoryBySlug = asyncHandler(async (req, res, next) => {
+  const { slug } = req.params;
+  const cat = await CategoryModel.findOne({ slug });
+});
+
+// ============================== getCategoryById =====================================//
+
 export const getCategoryByID = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const cat = await CategoryModel.findById(id);
+  0;
   if (!cat) return next(new ApiError("No categories found", 404));
-  res.status(201).json({ data: cat });
+  res.status(201).json({ message: "Success", data: cat });
 });
+
+// ============================== updateCategory =====================================//
+
 export const updateCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
+  const cat = await categoryServices.updateCategory(name, id);
 
-  const cat = await CategoryModel.findOneAndUpdate(
-    { _id: id },
-    { name, slug: slugify(name) },
-    { new: true }
-  );
   if (!cat) return next(new ApiError("No categories found", 404));
-  res.status(201).json({ data: cat });
+  res.status(201).json({ message: "Category updated successfully", data: cat });
 });
+
+// ============================== deleteDCategory =====================================//
+
 export const deleteCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const cat = await CategoryModel.findByIdAndDelete(id);
   if (!cat) return next(new ApiError("No categories found", 404));
-  res.status(204).send();
+  res.status(204).json({ message: "Category deleted successfully" });
 });

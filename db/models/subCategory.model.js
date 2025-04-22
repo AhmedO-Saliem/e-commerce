@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import {mongoose , Types} from "mongoose";
 
 const subCategorySchema = new mongoose.Schema({
   name: {
@@ -14,10 +14,13 @@ const subCategorySchema = new mongoose.Schema({
     type: String,
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
+    // type: mongoose.Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: "Category",
-    required: [true,"subcategory must belong to a parent category"],
+    required: [true, "subcategory must belong to a parent category"],
   },
 }, { timestamps: true, versionKey: false });
 
 const SubCategoryModel = mongoose.model("SubCategory", subCategorySchema);
+
+export default SubCategoryModel;

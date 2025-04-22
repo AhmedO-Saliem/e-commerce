@@ -6,9 +6,9 @@ export class ApiFeature {
   pagination() {
     let page = this.queryString.page * 1 || 1;
     if (page < 1) page = 1;
-    let limit = 2;
+    let limit = this.queryString.limit * 1 || 5;
     let skip = (page - 1) * limit;
-    this.mongooseQuery.find().skip(skip).limit(limit);
+    this.mongooseQuery.skip(skip).limit(limit);
     this.page = page;
     return this;
   }
