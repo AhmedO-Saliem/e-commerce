@@ -1,4 +1,3 @@
-import { stringify } from "flatted";
 
 export const globalErrorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
@@ -11,7 +10,6 @@ export const globalErrorHandler = (err, req, res, next) => {
 const sendErrorForDev = (err, res) => {
   return res.status(err.statusCode).json({
     status: err.status,
-    // error: stringify(err),
     error: err,
     message: err.message,
     stack: err.stack,

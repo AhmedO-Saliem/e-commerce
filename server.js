@@ -16,8 +16,12 @@ connectDB();
 // Mount Routes
 import categoryRouter from "./src/modules/category/category.routes.js";
 import subCategoryRouter from "./src/modules/subCategory/subCategory.routes.js";
+import brandRouter from "./src/modules/brand/brand.routes.js";
+import ProductRouter from "./src/modules/product/product.routes.js";
 app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/sub-cat",subCategoryRouter );
+app.use("/api/v1/subcategories", subCategoryRouter);
+app.use("/api/v1/brands", brandRouter);
+app.use("/api/v1/products", ProductRouter);
 
 app.all("*", (req, res, next) => {
   next(new ApiError(`Can't find this route: ${req.originalUrl}`, 404));
@@ -35,7 +39,7 @@ const server = app.listen(PORT, () => {
 process.on("unhandledRejection", (err) => {
   console.error(`Unhandled Rejection Error: ${err.message}`);
   console.error(err.stack);
-    server.close(() => {
-        process.exit(1);
-    });
+  server.close(() => {
+    process.exit(1);
+  });
 });

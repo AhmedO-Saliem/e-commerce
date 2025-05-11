@@ -1,32 +1,31 @@
-import slugify from "slugify";
 import { body, check } from "express-validator";
 import { validatorMiddleware } from "../../middleware/validator.middleware.js";
 
-export const getCategoryValidator = [
-  check("id").isMongoId().withMessage("invalid category id"),
+export const getBrandValidator = [
+  check("id").isMongoId().withMessage("invalid brand id"),
   validatorMiddleware,
 ];
-export const createCategoryValidator = [
+export const createBrandValidator = [
   check("name")
     .notEmpty()
-    .withMessage("category name is required")
+    .withMessage("brand name is required")
     .isLength({ min: 3, max: 30 })
-    .withMessage("category name must be between 3 to 30 characters")
+    .withMessage("brand name must be between 3 to 30 characters")
     .custom((val, { req }) => {
       req.body.slug = slugify(val);
       return true;
     }),
   validatorMiddleware,
 ];
-export const updateCategoryValidator = [
-  check("id").isMongoId().withMessage("invalid category id"),
+export const updateBrandValidator = [
+  check("id").isMongoId().withMessage("invalid brand id"),
   body("name").custom((val, { req }) => {
     req.body.slug = slugify(val);
     return true;
   }),
   validatorMiddleware,
 ];
-export const deleteCategoryValidator = [
-  check("id").isMongoId().withMessage("invalid category id"),
+export const deleteBrandValidator = [
+  check("id").isMongoId().withMessage("invalid brand id"),
   validatorMiddleware,
 ];

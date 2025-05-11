@@ -1,4 +1,5 @@
-import {mongoose , Types} from "mongoose";
+
+import mongoose, { Types } from "mongoose";
 
 const subCategorySchema = new mongoose.Schema({
   name: {
@@ -14,12 +15,19 @@ const subCategorySchema = new mongoose.Schema({
     type: String,
   },
   category: {
-    // type: mongoose.Schema.Types.ObjectId,
     type: Types.ObjectId,
     ref: "Category",
     required: [true, "subcategory must belong to a parent category"],
   },
 }, { timestamps: true, versionKey: false });
+
+subCategorySchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "category",
+    select: "name",
+  });
+  next();
+});
 
 const SubCategoryModel = mongoose.model("SubCategory", subCategorySchema);
 
